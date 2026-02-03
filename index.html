@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mois en cours</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img id="monthImage" alt="Image du mois" />
+        <img id="dayImage" alt="Image du jour" />
+    </div>
+
+    <script>
+        const currentMonth = new Date().getMonth() + 1;
+        const currentDay = new Date().getDate();
+        const monthImage = document.getElementById('monthImage');
+        const dayImage = document.getElementById('dayImage');
+        monthImage.src = `img/month/${currentMonth}.png`;
+        dayImage.src = `img/day/${currentDay}.png`;
+        dayImage.style.marginLeft = currentDay <= 9 ? '-80px' : '-100px';
+    </script>
+</body>
+</html>
