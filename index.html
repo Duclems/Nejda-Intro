@@ -24,22 +24,80 @@
             max-width: 100%;
             height: auto;
         }
+        .weather-icon {
+            height: 400px;
+            width: 400px;
+            object-fit: contain;
+            margin-left: 12px;
+            border: 2px solid red;
+            background: red;
+            box-sizing: border-box;
+            transform: rotate(40deg);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <img id="monthImage" alt="Image du mois" />
         <img id="dayImage" alt="Image du jour" />
+        <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
     </div>
 
     <script>
-        const currentMonth = new Date().getMonth() + 1;
-        const currentDay = new Date().getDate();
+        const currentDate = new Date();
+        const day = currentDate.getDate();
+        const month = currentDate.getMonth() + 1;
         const monthImage = document.getElementById('monthImage');
         const dayImage = document.getElementById('dayImage');
-        monthImage.src = `img/month/${currentMonth}.png`;
-        dayImage.src = `img/day/${currentDay}.png`;
-        dayImage.style.marginLeft = currentDay <= 9 ? '-80px' : '-100px';
+        const weatherImage = document.getElementById('weatherImage');
+
+        monthImage.src = `img/month/${month}.png`;
+        dayImage.src = `img/day/${day}.png`;
+
+        if (day <= 9) {
+            dayImage.style.marginLeft = '-105px';
+            dayImage.style.marginTop = '-6px';
+        } else if (day <= 19) {
+            dayImage.style.marginLeft = '-120px';
+            dayImage.style.marginTop = '-5px';
+        } else if (day <= 29) {
+            dayImage.style.marginLeft = '-130px';
+            dayImage.style.marginTop = '-5px';
+        } else {
+            dayImage.style.marginLeft = '-126px';
+            dayImage.style.marginTop = '0px';
+        }
+
+        function weatherCodeToIcon(code) {
+            if (code === 0) return 'weather/sun-svgrepo-com.svg';
+            if (code >= 1 && code <= 3) return 'weather/cloudy-svgrepo-com.svg';
+            if (code >= 45 && code <= 48) return 'weather/cloudy1-svgrepo-com.svg';
+            if (code >= 51 && code <= 67 || code >= 80 && code <= 82) return 'weather/rain-svgrepo-com.svg';
+            if (code >= 71 && code <= 77 || code >= 85 && code <= 86) return 'weather/snow-svgrepo-com.svg';
+            if (code >= 95 && code <= 99) return 'weather/lightning-svgrepo-com.svg';
+            return 'weather/cloud-svgrepo-com.svg';
+        }
+
+        function fetchWeather(latitude, longitude) {
+            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code&timezone=Europe%2FParis&forecast_days=1`;
+            fetch(weatherUrl)
+                .then(r => r.json())
+                .then(data => {
+                    const code = data.daily?.weather_code?.[0] ?? 0;
+                    weatherImage.src = weatherCodeToIcon(code);
+                    weatherImage.style.display = 'block';
+                })
+                .catch(() => { weatherImage.style.display = 'none'; });
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+                () => fetchWeather(48.8566, 2.3522)
+            );
+        } else {
+            fetchWeather(48.8566, 2.3522);
+        }
     </script>
 </body>
 </html>
