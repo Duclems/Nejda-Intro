@@ -18,6 +18,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            position: relative;
         }
         img {
             display: block;
@@ -28,37 +29,101 @@
             margin-left: -150px;
             margin-top: 60px;
         }
+        #monthImage, #dayImage {
+            position: relative;
+            z-index: 1;
+        }
         .weather-icon {
+            width: 600px;
             height: 400px;
-            width: 400px;
             object-fit: contain;
+            object-position: right center;
             margin-left: 12px;
-            border: 2px solid red;
-            background: red;
+            padding-right: 20px;
+            margin-top: -350px;
+            background: white;
             box-sizing: border-box;
-            transform: rotate(40deg);
+            transform: rotate(-15deg);
+            position: relative;
+            z-index: 0;
+        }
+        .scroll-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <button type="button" class="scroll-toggle" id="scrollToggle">Défiler jours/mois</button>
     <div class="container">
         <img id="monthImage" alt="Image du mois" />
         <img id="dayImage" alt="Image du jour" />
-        <span id="weekday"></span>
         <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
     </div>
 
     <script>
-        const currentDate = new Date();
-        const day = currentDate.getDate();
-        const month = currentDate.getMonth() + 1;
+        let day = new Date().getDate();
+        let month = new Date().getMonth() + 1;
+        let scrollInterval = null;
         const monthImage = document.getElementById('monthImage');
         const dayImage = document.getElementById('dayImage');
         const weatherImage = document.getElementById('weatherImage');
 
-        monthImage.src = `img/month/${month}.png`;
-        dayImage.src = `img/day/${day}.png`;
-        document.getElementById('weekday').textContent = currentDate.toLocaleDateString('fr-FR', { weekday: 'long' });
+        function setWeatherMargin(dayNum) {
+            let base;
+            if (dayNum <= 9) base = 640;
+            else if (dayNum <= 19) base = 390;
+            else if (dayNum <= 29) base = 320;
+            else base = 350;
+            if (dayNum === 1 || dayNum === 11 || dayNum === 21 || dayNum === 31) base += 50;
+            weatherImage.style.marginLeft = `-${base}px`;
+        }
+
+        function showCurrentDate() {
+            const d = new Date();
+            day = d.getDate();
+            month = d.getMonth() + 1;
+            monthImage.src = `img/month/${month}.png`;
+            dayImage.src = `img/day/${day}.png`;
+            setWeatherMargin(day);
+        }
+
+        function scrollStep() {
+            monthImage.src = `img/month/${month}.png`;
+            dayImage.src = `img/day/${day}.png`;
+            setWeatherMargin(day);
+            day = day >= 31 ? 1 : day + 1;
+            if (day === 1) month = month >= 12 ? 1 : month + 1;
+        }
+
+        function startScroll() {
+            if (scrollInterval) return;
+            day = 1;
+            month = 1;
+            scrollStep();
+            scrollInterval = setInterval(scrollStep, 800);
+            document.getElementById('scrollToggle').textContent = 'Date du jour';
+        }
+
+        function stopScroll() {
+            if (scrollInterval) {
+                clearInterval(scrollInterval);
+                scrollInterval = null;
+            }
+            showCurrentDate();
+            document.getElementById('scrollToggle').textContent = 'Défiler jours/mois';
+        }
+
+        document.getElementById('scrollToggle').addEventListener('click', function () {
+            if (scrollInterval) stopScroll();
+            else startScroll();
+        });
+
+        showCurrentDate();
 
         function weatherCodeToIcon(code) {
             if (code === 0) return 'weather/sun-svgrepo-com.svg';
@@ -79,6 +144,7 @@
                 const code = data.current?.weather_code ?? 0;
                 weatherImage.src = weatherCodeToIcon(code);
                 weatherImage.style.display = 'block';
+                setWeatherMargin(day);
             })
             .catch(() => { weatherImage.style.display = 'none'; });
     </script>
