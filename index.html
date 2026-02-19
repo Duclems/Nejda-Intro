@@ -33,6 +33,17 @@
             position: relative;
             z-index: 1;
         }
+        .month-block {
+            position: relative;
+        }
+        #periodImage {
+            position: absolute;
+            left: 800px;
+            top: 500px;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 10;
+        }
         #weekdayImage {
             position: absolute;
             z-index: 1;
@@ -69,7 +80,10 @@
 <body>
     <button type="button" class="scroll-toggle" id="scrollToggle">Défiler jours/mois</button>
     <div class="container">
-        <img id="monthImage" alt="Image du mois" />
+        <div class="month-block">
+            <img id="monthImage" alt="Image du mois" />
+            <img id="periodImage" alt="Période" />
+        </div>
         <img id="dayImage" alt="Image du jour" />
         <img id="weekdayImage" alt="Jour de la semaine" />
         <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
@@ -80,7 +94,10 @@
         let month = new Date().getMonth() + 1;
         let scrollInterval = null;
         let weatherScrollIndex = 0;
+        let periodScrollIndex = 0;
         let savedWeatherSrc = '';
+        let savedPeriodSrc = '';
+        const periodIcons = ['img/periods/morning.png', 'img/periods/noon.png', 'img/periods/evening.png'];
         const weatherIcons = [
             'img/weather/sun.gif',
             'img/weather/cloudy-sun.gif',
@@ -90,7 +107,15 @@
         const monthImage = document.getElementById('monthImage');
         const dayImage = document.getElementById('dayImage');
         const weekdayImage = document.getElementById('weekdayImage');
+        const periodImage = document.getElementById('periodImage');
         const weatherImage = document.getElementById('weatherImage');
+
+        function getPeriodImage() {
+            const h = new Date().getHours();
+            if (h >= 3 && h < 12) return 'img/periods/morning.png';
+            if (h >= 12 && h < 18) return 'img/periods/noon.png';
+            return 'img/periods/evening.png';
+        }
 
         function setWeatherMargin(dayNum) {
             let base;
@@ -104,17 +129,23 @@
 
         function showCurrentDate() {
             const d = new Date();
+            const weekday = d.getDay(); // 0 = dimanche, 1 = lundi, ...
+            const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
             day = d.getDate();
             month = d.getMonth() + 1;
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
-            weekdayImage.src = 'img/text-day/vendredi.png';
+            // image du jour de la semaine, par ex. img/text-day/vendredi.png
+            weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+            periodImage.src = getPeriodImage();
             setWeatherMargin(day);
         }
 
         function scrollStep() {
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
+            periodImage.src = periodIcons[periodScrollIndex % periodIcons.length];
+            periodScrollIndex++;
             weatherImage.src = weatherIcons[weatherScrollIndex % weatherIcons.length];
             weatherScrollIndex++;
             setWeatherMargin(day);
@@ -125,7 +156,9 @@
         function startScroll() {
             if (scrollInterval) return;
             savedWeatherSrc = weatherImage.src || '';
+            savedPeriodSrc = periodImage.src || '';
             weatherScrollIndex = 0;
+            periodScrollIndex = 0;
             day = 1;
             month = 1;
             scrollStep();
@@ -139,6 +172,7 @@
                 scrollInterval = null;
             }
             if (savedWeatherSrc) weatherImage.src = savedWeatherSrc;
+            if (savedPeriodSrc) periodImage.src = savedPeriodSrc;
             showCurrentDate();
             document.getElementById('scrollToggle').textContent = 'Défiler jours/mois';
         }
