@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date custom</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        #dayImage {
+            margin-left: -150px;
+            margin-top: 60px;
+        }
+        #monthImage, #dayImage {
+            position: relative;
+            z-index: 1;
+        }
+        .month-block {
+            position: relative;
+        }
+        #periodImage {
+            position: absolute;
+            left: 800px;
+            top: 500px;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 10;
+        }
+        #weekdayImage {
+            position: absolute;
+            z-index: 1;
+            left: 0;
+            margin-left: 800px;
+            top: 140px;
+            width: 1000px;
+            height: auto;
+        }
+        .weather-icon {
+            width: 600px;
+            height: 400px;
+            object-fit: contain;
+            object-position: right center;
+            margin-left: 12px;
+            padding-right: 20px;
+            margin-top: -350px;
+            background: white;
+            box-sizing: border-box;
+            transform: rotate(-15deg);
+            position: relative;
+            z-index: 0;
+        }
+        .param-card {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            min-width: 200px;
+        }
+        .param-card h3 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+        }
+        .param-card label {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .param-card input, .param-card select {
+            width: 100%;
+            margin-top: 4px;
+            padding: 6px 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="param-card" id="paramCard">
+        <h3>Paramètres</h3>
+        <label>Jour <input type="number" id="paramDay" min="1" max="31" value="15" /></label>
+        <label>Mois <input type="number" id="paramMonth" min="1" max="12" value="2" /></label>
+        <label>Année <input type="number" id="paramYear" min="2000" max="2100" value="2025" /></label>
+        <label>Période
+            <select id="paramPeriod">
+                <option value="">Aucune</option>
+                <option value="morning">Matin (3h–12h)</option>
+                <option value="noon">Après-midi (12h–18h)</option>
+                <option value="evening">Soir (18h–3h)</option>
+            </select>
+        </label>
+        <label>Météo
+            <select id="paramWeather">
+                <option value="">Aucune</option>
+                <option value="sun">Soleil</option>
+                <option value="cloudy-sun">Nuageux + soleil</option>
+                <option value="rain">Pluie</option>
+                <option value="clouds">Nuageux</option>
+            </select>
+        </label>
+    </div>
+    <div class="container">
+        <div class="month-block">
+            <img id="monthImage" alt="Image du mois" />
+            <img id="periodImage" alt="Période" />
+        </div>
+        <img id="dayImage" alt="Image du jour" />
+        <img id="weekdayImage" alt="Jour de la semaine" />
+        <img id="weatherImage" class="weather-icon" alt="Météo" />
+    </div>
+
+    <script>
+        const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+        const periodPaths = { morning: 'img/periods/morning.png', noon: 'img/periods/noon.png', evening: 'img/periods/evening.png' };
+        const weatherPaths = { sun: 'img/weather/sun.gif', 'cloudy-sun': 'img/weather/cloudy-sun.gif', rain: 'img/weather/rain.gif', clouds: 'img/weather/clouds.gif' };
+
+        const monthImage = document.getElementById('monthImage');
+        const dayImage = document.getElementById('dayImage');
+        const weekdayImage = document.getElementById('weekdayImage');
+        const periodImage = document.getElementById('periodImage');
+        const weatherImage = document.getElementById('weatherImage');
+        const paramDay = document.getElementById('paramDay');
+        const paramMonth = document.getElementById('paramMonth');
+        const paramYear = document.getElementById('paramYear');
+        const paramPeriod = document.getElementById('paramPeriod');
+        const paramWeather = document.getElementById('paramWeather');
+        function setWeatherMargin(dayNum) {
+            let base;
+            if (dayNum <= 9) base = 640;
+            else if (dayNum <= 19) base = 390;
+            else if (dayNum <= 29) base = 320;
+            else base = 350;
+            if (dayNum === 1 || dayNum === 11 || dayNum === 21 || dayNum === 31) base += 50;
+            weatherImage.style.marginLeft = `-${base}px`;
+        }
+
+        function applyParams() {
+            const day = Math.max(1, Math.min(31, parseInt(paramDay.value, 10) || 1));
+            const month = Math.max(1, Math.min(12, parseInt(paramMonth.value, 10) || 1));
+            const year = parseInt(paramYear.value, 10) || new Date().getFullYear();
+            const period = paramPeriod.value;
+            const weather = paramWeather.value;
+
+            const d = new Date(year, month - 1, day);
+            const weekday = d.getDay();
+
+            monthImage.src = `img/month/${month}.png`;
+            dayImage.src = `img/day/${day}.png`;
+            weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+            if (period) {
+                periodImage.src = periodPaths[period];
+                periodImage.style.display = 'block';
+            } else {
+                periodImage.style.display = 'none';
+            }
+            if (weather) {
+                weatherImage.src = weatherPaths[weather];
+                weatherImage.style.display = 'block';
+                setWeatherMargin(day);
+            } else {
+                weatherImage.style.display = 'none';
+            }
+        }
+
+        [paramDay, paramMonth, paramYear, paramPeriod, paramWeather].forEach(function (el) {
+            el.addEventListener('change', applyParams);
+            el.addEventListener('input', applyParams);
+        });
+
+        applyParams();
+    </script>
+</body>
+</html>
