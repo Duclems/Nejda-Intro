@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prévisualisation date / période / météo</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            font-family: sans-serif;
+            color: #eee;
+        }
+        .controls {
+            max-width: 600px;
+            margin: 0 auto 24px;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 12px;
+        }
+        .controls h2 { margin-top: 0; }
+        .controls label { display: block; margin-top: 12px; margin-bottom: 4px; }
+        .controls select, .controls input[type="number"] {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #333;
+            color: #fff;
+        }
+        .controls button {
+            margin-top: 16px;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            background: #0a7;
+            color: #fff;
+            cursor: pointer;
+        }
+        .controls button:hover { background: #098; }
+        .preview-wrap {
+            background: green;
+            padding: 40px;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 0 auto;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        .preview-wrap img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        #dayImage { margin-left: -150px; margin-top: 60px; }
+        #monthImage, #dayImage { position: relative; z-index: 1; }
+        .month-block { position: relative; }
+        #periodImage {
+            position: absolute;
+            left: 800px;
+            top: 500px;
+            transform: translateX(-50%);
+            margin-top: 6px;
+            z-index: 10;
+        }
+        #weekdayImage {
+            position: absolute;
+            z-index: 1;
+            left: 0;
+            margin-left: 800px;
+            top: 140px;
+            width: 1000px;
+            height: auto;
+        }
+        .weather-icon {
+            width: 600px;
+            height: 400px;
+            object-fit: contain;
+            object-position: right center;
+            margin-left: 12px;
+            padding-right: 20px;
+            margin-top: -350px;
+            background: white;
+            box-sizing: border-box;
+            transform: rotate(-15deg);
+            position: relative;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h2>Rendu visuel – date, période, météo</h2>
+        <label>Jour (1–31)</label>
+        <input type="number" id="selDay" min="1" max="31" value="15" />
+        <label>Mois (1–12)</label>
+        <input type="number" id="selMonth" min="1" max="12" value="2" />
+        <label>Jour de la semaine</label>
+        <select id="selWeekday">
+            <option value="dimanche">Dimanche</option>
+            <option value="lundi">Lundi</option>
+            <option value="mardi">Mardi</option>
+            <option value="mercredi">Mercredi</option>
+            <option value="jeudi">Jeudi</option>
+            <option value="vendredi">Vendredi</option>
+            <option value="samedi">Samedi</option>
+        </select>
+        <label>Période</label>
+        <select id="selPeriod">
+            <option value="morning">Matin (3h–12h)</option>
+            <option value="noon">Après-midi (12h–18h)</option>
+            <option value="evening">Soir (18h–3h)</option>
+        </select>
+        <label>Météo</label>
+        <select id="selWeather">
+            <option value="sun">Soleil</option>
+            <option value="cloudy-sun">Nuageux + soleil</option>
+            <option value="rain">Pluie</option>
+            <option value="clouds">Nuageux</option>
+        </select>
+        <button type="button" id="btnNow">Remplir avec la date et l’heure actuelles</button>
+    </div>
+
+    <div class="preview-wrap">
+        <div class="container">
+            <div class="month-block">
+                <img id="monthImage" alt="Mois" />
+                <img id="periodImage" alt="Période" />
+            </div>
+            <img id="dayImage" alt="Jour" />
+            <img id="weekdayImage" alt="Jour de la semaine" />
+            <img id="weatherImage" class="weather-icon" alt="Météo" />
+        </div>
+    </div>
+
+    <script>
+        const monthImage = document.getElementById('monthImage');
+        const dayImage = document.getElementById('dayImage');
+        const weekdayImage = document.getElementById('weekdayImage');
+        const periodImage = document.getElementById('periodImage');
+        const weatherImage = document.getElementById('weatherImage');
+        const selDay = document.getElementById('selDay');
+        const selMonth = document.getElementById('selMonth');
+        const selWeekday = document.getElementById('selWeekday');
+        const selPeriod = document.getElementById('selPeriod');
+        const selWeather = document.getElementById('selWeather');
+
+        function setWeatherMargin(dayNum) {
+            let base;
+            if (dayNum <= 9) base = 640;
+            else if (dayNum <= 19) base = 390;
+            else if (dayNum <= 29) base = 320;
+            else base = 350;
+            if (dayNum === 1 || dayNum === 11 || dayNum === 21 || dayNum === 31) base += 50;
+            weatherImage.style.marginLeft = `-${base}px`;
+        }
+
+        function updatePreview() {
+            const day = Math.min(31, Math.max(1, parseInt(selDay.value, 10) || 1));
+            const month = Math.min(12, Math.max(1, parseInt(selMonth.value, 10) || 1));
+            const weekday = selWeekday.value;
+            const period = selPeriod.value;
+            const weather = selWeather.value;
+
+            selDay.value = day;
+            selMonth.value = month;
+
+            monthImage.src = `img/month/${month}.png`;
+            dayImage.src = `img/day/${day}.png`;
+            weekdayImage.src = `img/text-day/${weekday}.png`;
+            periodImage.src = `img/periods/${period}.png`;
+            weatherImage.src = `img/weather/${weather}.gif`;
+            weatherImage.style.display = 'block';
+            setWeatherMargin(day);
+        }
+
+        function setToNow() {
+            const d = new Date();
+            const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+            const h = d.getHours();
+            selDay.value = d.getDate();
+            selMonth.value = d.getMonth() + 1;
+            selWeekday.value = weekdayNames[d.getDay()];
+            if (h >= 3 && h < 12) selPeriod.value = 'morning';
+            else if (h >= 12 && h < 18) selPeriod.value = 'noon';
+            else selPeriod.value = 'evening';
+            updatePreview();
+        }
+
+        selDay.addEventListener('input', updatePreview);
+        selDay.addEventListener('change', updatePreview);
+        selMonth.addEventListener('input', updatePreview);
+        selMonth.addEventListener('change', updatePreview);
+        selWeekday.addEventListener('change', updatePreview);
+        selPeriod.addEventListener('change', updatePreview);
+        selWeather.addEventListener('change', updatePreview);
+        document.getElementById('btnNow').addEventListener('click', setToNow);
+
+        setToNow();
+    </script>
+</body>
+</html>
