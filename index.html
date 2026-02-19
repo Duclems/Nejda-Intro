@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: transparent;
+            background: green;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -23,6 +23,10 @@
             display: block;
             max-width: 100%;
             height: auto;
+        }
+        #dayImage {
+            margin-left: -150px;
+            margin-top: 60px;
         }
         .weather-icon {
             height: 400px;
@@ -40,6 +44,7 @@
     <div class="container">
         <img id="monthImage" alt="Image du mois" />
         <img id="dayImage" alt="Image du jour" />
+        <span id="weekday"></span>
         <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
     </div>
 
@@ -53,20 +58,7 @@
 
         monthImage.src = `img/month/${month}.png`;
         dayImage.src = `img/day/${day}.png`;
-
-        if (day <= 9) {
-            dayImage.style.marginLeft = '-105px';
-            dayImage.style.marginTop = '-6px';
-        } else if (day <= 19) {
-            dayImage.style.marginLeft = '-120px';
-            dayImage.style.marginTop = '-5px';
-        } else if (day <= 29) {
-            dayImage.style.marginLeft = '-130px';
-            dayImage.style.marginTop = '-5px';
-        } else {
-            dayImage.style.marginLeft = '-126px';
-            dayImage.style.marginTop = '0px';
-        }
+        document.getElementById('weekday').textContent = currentDate.toLocaleDateString('fr-FR', { weekday: 'long' });
 
         function weatherCodeToIcon(code) {
             if (code === 0) return 'weather/sun-svgrepo-com.svg';
@@ -78,26 +70,17 @@
             return 'weather/cloud-svgrepo-com.svg';
         }
 
-        function fetchWeather(latitude, longitude) {
-            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code&timezone=Europe%2FParis&forecast_days=1`;
-            fetch(weatherUrl)
-                .then(r => r.json())
-                .then(data => {
-                    const code = data.daily?.weather_code?.[0] ?? 0;
-                    weatherImage.src = weatherCodeToIcon(code);
-                    weatherImage.style.display = 'block';
-                })
-                .catch(() => { weatherImage.style.display = 'none'; });
-        }
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
-                () => fetchWeather(48.8566, 2.3522)
-            );
-        } else {
-            fetchWeather(48.8566, 2.3522);
-        }
+        const latitude = 48.5839;
+        const longitude = 7.7455;
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=weather_code&timezone=Europe%2FParis&models=meteofrance_seamless`;
+        fetch(weatherUrl)
+            .then(r => r.json())
+            .then(data => {
+                const code = data.current?.weather_code ?? 0;
+                weatherImage.src = weatherCodeToIcon(code);
+                weatherImage.style.display = 'block';
+            })
+            .catch(() => { weatherImage.style.display = 'none'; });
     </script>
 </body>
 </html>
