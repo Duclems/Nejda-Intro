@@ -13,6 +13,8 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 22px;
         }
         .container {
             display: flex;
@@ -73,24 +75,27 @@
             left: 16px;
             z-index: 100;
             background: #fff;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            min-width: 200px;
+            border-radius: 16px;
+            padding: 20px 24px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+            min-width: 760px;
+            max-width: 820px;
+            box-sizing: border-box;
         }
         .param-card h3 {
-            margin: 0 0 12px 0;
-            font-size: 14px;
+            margin: 0 0 20px 0;
+            font-size: 1.6rem;
         }
         .param-card label {
             display: block;
-            margin-top: 8px;
-            font-size: 12px;
+            margin-top: 14px;
+            font-size: 1.25rem;
         }
         .param-card input, .param-card select {
             width: 100%;
-            margin-top: 4px;
-            padding: 6px 8px;
+            margin-top: 8px;
+            padding: 12px 14px;
+            font-size: 1.25rem;
             box-sizing: border-box;
         }
     </style>
@@ -186,6 +191,11 @@
             el.addEventListener('change', applyParams);
             el.addEventListener('input', applyParams);
         });
+
+        var params = new URLSearchParams(location.search);
+        if (params.has('day')) paramDay.value = params.get('day');
+        if (params.has('month')) paramMonth.value = params.get('month');
+        if (params.has('year')) paramYear.value = params.get('year');
 
         applyParams();
     </script>
