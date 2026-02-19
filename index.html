@@ -33,6 +33,15 @@
             position: relative;
             z-index: 1;
         }
+        #weekdayImage {
+            position: absolute;
+            z-index: 1;
+            left: 0;
+            margin-left: 800px;
+            top: 140px;
+            width: 1000px;
+            height: auto;
+        }
         .weather-icon {
             width: 600px;
             height: 400px;
@@ -62,6 +71,7 @@
     <div class="container">
         <img id="monthImage" alt="Image du mois" />
         <img id="dayImage" alt="Image du jour" />
+        <img id="weekdayImage" alt="Jour de la semaine" />
         <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
     </div>
 
@@ -79,6 +89,7 @@
         ];
         const monthImage = document.getElementById('monthImage');
         const dayImage = document.getElementById('dayImage');
+        const weekdayImage = document.getElementById('weekdayImage');
         const weatherImage = document.getElementById('weatherImage');
 
         function setWeatherMargin(dayNum) {
@@ -97,6 +108,7 @@
             month = d.getMonth() + 1;
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
+            weekdayImage.src = 'img/text-day/vendredi.png';
             setWeatherMargin(day);
         }
 
