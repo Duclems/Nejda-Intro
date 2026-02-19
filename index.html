@@ -69,6 +69,14 @@
         let day = new Date().getDate();
         let month = new Date().getMonth() + 1;
         let scrollInterval = null;
+        let weatherScrollIndex = 0;
+        let savedWeatherSrc = '';
+        const weatherIcons = [
+            'img/weather/sun.gif',
+            'img/weather/cloudy-sun.gif',
+            'img/weather/rain.gif',
+            'img/weather/clouds.gif'
+        ];
         const monthImage = document.getElementById('monthImage');
         const dayImage = document.getElementById('dayImage');
         const weatherImage = document.getElementById('weatherImage');
@@ -95,6 +103,8 @@
         function scrollStep() {
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
+            weatherImage.src = weatherIcons[weatherScrollIndex % weatherIcons.length];
+            weatherScrollIndex++;
             setWeatherMargin(day);
             day = day >= 31 ? 1 : day + 1;
             if (day === 1) month = month >= 12 ? 1 : month + 1;
@@ -102,6 +112,8 @@
 
         function startScroll() {
             if (scrollInterval) return;
+            savedWeatherSrc = weatherImage.src || '';
+            weatherScrollIndex = 0;
             day = 1;
             month = 1;
             scrollStep();
@@ -114,6 +126,7 @@
                 clearInterval(scrollInterval);
                 scrollInterval = null;
             }
+            if (savedWeatherSrc) weatherImage.src = savedWeatherSrc;
             showCurrentDate();
             document.getElementById('scrollToggle').textContent = 'Défiler jours/mois';
         }
@@ -126,13 +139,19 @@
         showCurrentDate();
 
         function weatherCodeToIcon(code) {
-            if (code === 0) return 'weather/sun-svgrepo-com.svg';
-            if (code >= 1 && code <= 3) return 'weather/cloudy-svgrepo-com.svg';
-            if (code >= 45 && code <= 48) return 'weather/cloudy1-svgrepo-com.svg';
-            if (code >= 51 && code <= 67 || code >= 80 && code <= 82) return 'weather/rain-svgrepo-com.svg';
-            if (code >= 71 && code <= 77 || code >= 85 && code <= 86) return 'weather/snow-svgrepo-com.svg';
-            if (code >= 95 && code <= 99) return 'weather/lightning-svgrepo-com.svg';
-            return 'weather/cloud-svgrepo-com.svg';
+            if (code === 0) return 'img/weather/sun.gif';                      // grand ciel bleu
+            if (code === 1 || code === 2) return 'img/weather/cloudy-sun.gif'; // soleil + quelques nuages
+            // pluie, neige, orages => même GIF "rain"
+            if (
+                (code >= 51 && code <= 67) ||  // pluie / bruine
+                (code >= 80 && code <= 82) ||  // averses
+                (code >= 71 && code <= 77) ||  // neige
+                (code >= 85 && code <= 86) ||  // averses de neige
+                (code >= 95 && code <= 99)     // orages
+            ) {
+                return 'img/weather/rain.gif';
+            }
+            return 'img/weather/clouds.gif';                                   // le reste: nuageux / couvert etc.
         }
 
         const latitude = 48.5839;
