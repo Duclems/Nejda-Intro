@@ -40,8 +40,8 @@
         }
         #periodImage {
             position: absolute;
-            left: 800px;
-            top: 500px;
+            left: 750px;
+            top: 550px;
             transform: translateX(-50%);
             margin-top: 6px;
             z-index: 10;
@@ -51,7 +51,7 @@
             z-index: 1;
             left: 0;
             margin-left: 800px;
-            top: 140px;
+            top: 230px;
             width: 1000px;
             height: auto;
         }
@@ -172,6 +172,7 @@
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+            weekdayImage.style.top = day <= 9 ? '180px' : '230px';
             if (period) {
                 periodImage.src = periodPaths[period];
                 periodImage.style.display = 'block';

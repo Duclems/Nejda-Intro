@@ -38,8 +38,8 @@
         }
         #periodImage {
             position: absolute;
-            left: 800px;
-            top: 500px;
+            left: 750px;
+            top: 550px;
             transform: translateX(-50%);
             margin-top: 6px;
             z-index: 10;
@@ -49,7 +49,7 @@
             z-index: 1;
             left: 0;
             margin-left: 800px;
-            top: 140px;
+            top: 230px;
             width: 1000px;
             height: auto;
         }
@@ -97,6 +97,7 @@
         let periodScrollIndex = 0;
         let savedWeatherSrc = '';
         let savedPeriodSrc = '';
+        const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
         const periodIcons = ['img/periods/morning.png', 'img/periods/noon.png', 'img/periods/evening.png'];
         const weatherIcons = [
             'img/weather/sun.gif',
@@ -129,21 +130,24 @@
 
         function showCurrentDate() {
             const d = new Date();
-            const weekday = d.getDay(); // 0 = dimanche, 1 = lundi, ...
-            const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+            const weekday = d.getDay();
             day = d.getDate();
             month = d.getMonth() + 1;
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
             // image du jour de la semaine, par ex. img/text-day/vendredi.png
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+            weekdayImage.style.top = day <= 9 ? '180px' : '230px';
             periodImage.src = getPeriodImage();
             setWeatherMargin(day);
         }
 
         function scrollStep() {
+            const weekday = new Date(2025, month - 1, day).getDay();
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
+            weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+            weekdayImage.style.top = day <= 9 ? '180px' : '230px';
             periodImage.src = periodIcons[periodScrollIndex % periodIcons.length];
             periodScrollIndex++;
             weatherImage.src = weatherIcons[weatherScrollIndex % weatherIcons.length];
