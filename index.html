@@ -11,8 +11,7 @@
             background: green;
             display: flex;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            min-height: 50vh;
         }
         .container {
             display: flex;
@@ -74,6 +73,12 @@
             padding: 8px 16px;
             font-size: 14px;
             cursor: pointer;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        .scroll-toggle.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -186,6 +191,26 @@
             else startScroll();
         });
 
+        let hideButtonTimer = null;
+        const scrollBtn = document.getElementById('scrollToggle');
+
+        function scheduleHideButton() {
+            if (hideButtonTimer) clearTimeout(hideButtonTimer);
+            hideButtonTimer = setTimeout(function () {
+                scrollBtn.classList.add('hidden');
+            }, 1000);
+        }
+
+        function showButton() {
+            scrollBtn.classList.remove('hidden');
+            scheduleHideButton();
+        }
+
+        ['mousemove', 'mousedown', 'click', 'touchstart', 'keydown'].forEach(function (ev) {
+            document.addEventListener(ev, showButton, { passive: true });
+        });
+
+        scheduleHideButton();
         showCurrentDate();
 
         function weatherCodeToIcon(code) {
