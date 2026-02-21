@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bottom Widget</title>
+    <style>
+        @font-face {
+            font-family: 'HelveticaNowDisplayBlack';
+            src: url('font/HelveticaNowDisplay-Black.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'ArialRoundedMTBold';
+            src: url('font/arialroundedmtbold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'FuturaCyrillicExtraBold';
+            src: url('font/FuturaCyrillicExtraBold.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        #widget-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="widget-content"></div>
+
+    <script>
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQYhE3hEeFui0U31htqONTN6IaOawSXJ2Z5oKWDjN7rGIbA58LOqtaieixcGeiIxa9PADeYe2-BualD/pub?gid=0&single=true&output=csv';
+        const fallbackLines = ['Days until', 'Societal Collapse :', 'Stop the spread of COVID-19', 'FEW', 'Stay in quarantine'];
+
+        function fontForIndex(i, total) {
+            if (i === 0 || i === 1) return 'HelveticaNowDisplayBlack';
+            if (i === 2 || i === total - 1) return 'ArialRoundedMTBold';
+            if (i === 3) return 'FuturaCyrillicExtraBold';
+            return 'ArialRoundedMTBold';
+        }
+
+        function sizeForIndex(i) {
+            if (i === 0) return '0.85rem';
+            if (i === 1) return '1.6rem';
+            if (i === 2) return '1.1rem';
+            if (i === 3) return '2.2rem';
+            return '1rem';
+        }
+
+        function letterSpacingForIndex(i) {
+            if (i === 0 || i === 1 || i === 3) return '-0.04em';
+            return 'normal';
+        }
+
+        function capitalizeFirst(str) {
+            if (!str.length) return str;
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function render(lines) {
+            const el = document.getElementById('widget-content');
+            const n = lines.length;
+            el.innerHTML = lines.map(function (line, i) {
+                var font = fontForIndex(i, n);
+                var size = sizeForIndex(i);
+                var spacing = letterSpacingForIndex(i);
+                var cap = capitalizeFirst(line);
+                var style = 'font-family: ' + font + ', sans-serif; font-size: ' + size + '; letter-spacing: ' + spacing + '; color: #DC3622;';
+                if (i === 0 || i === 1) {
+                    style += ' background: #000; border: 2px solid #000; padding: 4px 10px; display: inline-block;';
+                    style += ' color: #DC3622;';
+                }
+                if (i === 1) {
+                    style += ' transform-origin: bottom center; transform: scaleY(1.7);';
+                }
+                if (i === 2 || i === 3) {
+                    style += ' color: #000;';
+                    style += ' background: #DC3622; border: 2px solid #DC3622; padding: 4px 10px; display: inline-block;';
+                }
+                if (i === 3) {
+                    style += ' text-transform: uppercase;';
+                    style += ' transform-origin: bottom center; transform: scaleY(1.35);';
+                }
+                if (i === 4) {
+                    style += ' color: #fff;';
+                    style += ' background: #000;';
+                    style += ' border: 2px solid #000;';
+                    style += ' display: inline-block;';
+                    style += ' padding: 4px 10px;';
+                }
+                return '<div style="' + style + '">' + escapeHtml(cap) + '</div>';
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        fetch(csvUrl)
+            .then(function (r) { return r.text(); })
+            .then(function (text) {
+                const lines = text.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+                render(lines.length ? lines : fallbackLines);
+            })
+            .catch(function () {
+                render(fallbackLines);
+            });
+    </script>
+</body>
+</html>
