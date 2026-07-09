@@ -26,15 +26,22 @@
             height: auto;
         }
         #dayImage {
-            margin-left: -150px;
             margin-top: 60px;
-        }
-        #monthImage, #dayImage {
             position: relative;
             z-index: 1;
         }
-        .month-block {
+        .day-block {
             position: relative;
+        }
+        #monthImage {
+            position: absolute;
+            z-index: 2;
+            top: 140px;
+            left: 58%;
+            margin-left: -300px;
+            width: 129.6%;
+            max-width: 684px;
+            height: auto;
         }
         #periodImage {
             position: absolute;
@@ -86,11 +93,11 @@
 <body>
     <button type="button" class="scroll-toggle" id="scrollToggle">Défiler jours/mois</button>
     <div class="container">
-        <div class="month-block">
+        <div class="day-block">
+            <img id="dayImage" alt="Image du jour" />
             <img id="monthImage" alt="Image du mois" />
             <img id="periodImage" alt="Période" />
         </div>
-        <img id="dayImage" alt="Image du jour" />
         <img id="weekdayImage" alt="Jour de la semaine" />
         <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
     </div>

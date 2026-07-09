@@ -19,22 +19,46 @@
             max-width: 100%;
             height: auto;
         }
+        .day-block {
+            position: relative;
+        }
+        #dayImage {
+            margin-top: 60px;
+            position: relative;
+            z-index: 1;
+            visibility: hidden;
+        }
+        #monthImage {
+            position: absolute;
+            z-index: 2;
+            top: 140px;
+            left: 58%;
+            margin-left: -300px;
+            width: 129.6%;
+            max-width: 684px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
-    <img id="monthImage" alt="Image du mois" />
+    <div class="day-block">
+        <img id="dayImage" alt="Numéro du jour" />
+        <img id="monthImage" alt="Image du mois" />
+    </div>
 
     <script>
+        const dayImage = document.getElementById('dayImage');
         const monthImage = document.getElementById('monthImage');
         const params = new URLSearchParams(location.search);
+        const day = params.has('day')
+            ? Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1))
+            : new Date().getDate();
+        const month = params.has('month')
+            ? Math.max(1, Math.min(12, parseInt(params.get('month'), 10) || 1))
+            : new Date().getMonth() + 1;
 
-        if (params.has('month')) {
-            const month = Math.max(1, Math.min(12, parseInt(params.get('month'), 10) || 1));
-            monthImage.src = `img/month/${month}.png`;
-        } else {
-            const month = new Date().getMonth() + 1;
-            monthImage.src = `img/month/${month}.png`;
-        }
+        dayImage.src = `img/day/${day}.png`;
+        monthImage.src = `img/month/${month}.png`;
     </script>
 </body>
 </html>
