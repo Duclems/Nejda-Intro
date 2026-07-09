@@ -48,7 +48,7 @@
         #periodImage {
             position: absolute;
             left: 950px;
-            top: 140px;
+            top: 120px;
             transform: translateX(-50%);
             margin-top: 6px;
             z-index: 10;
@@ -157,6 +157,26 @@
         const paramYear = document.getElementById('paramYear');
         const paramPeriod = document.getElementById('paramPeriod');
         const paramWeather = document.getElementById('paramWeather');
+        const weekdayOffsets = {
+            dimanche: { marginLeft: -100, topExtra: 150 },
+            mardi: { marginLeft: -50, topExtra: 100 },
+            mercredi: { marginLeft: -100, topExtra: 150 },
+            vendredi: { marginLeft: -100, topExtra: 150 },
+            samedi: { marginLeft: -100, topExtra: 150 }
+        };
+
+        function setWeekdayLayout(weekdayIndex, dayNum) {
+            const name = weekdayNames[weekdayIndex];
+            const offset = weekdayOffsets[name] || { marginLeft: 100, topExtra: 0 };
+            weekdayImage.style.marginLeft = offset.marginLeft + 'px';
+            const baseTop = dayNum <= 9 ? 180 : 230;
+            weekdayImage.style.top = (baseTop + offset.topExtra) + 'px';
+        }
+
+        function setPeriodLeft(dayNum) {
+            periodImage.style.left = (dayNum >= 10 ? 1250 : 950) + 'px';
+        }
+
         function setWeatherMargin(dayNum) {
             let base;
             if (dayNum <= 9) base = 640;
@@ -180,7 +200,8 @@
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
-            weekdayImage.style.top = day <= 9 ? '180px' : '230px';
+            setWeekdayLayout(weekday, day);
+            setPeriodLeft(day);
             if (period) {
                 periodImage.src = periodPaths[period];
                 periodImage.style.display = 'block';

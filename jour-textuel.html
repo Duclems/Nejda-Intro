@@ -30,19 +30,37 @@
     <script>
         const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
         const weekdayImage = document.getElementById('weekdayImage');
+        const weekdayOffsets = {
+            dimanche: { marginLeft: -100, marginTop: 150 },
+            mardi: { marginLeft: -50, marginTop: 100 },
+            mercredi: { marginLeft: -100, marginTop: 150 },
+            vendredi: { marginLeft: -100, marginTop: 150 },
+            samedi: { marginLeft: -100, marginTop: 150 }
+        };
+
+        function setWeekdayLayout(weekdayIndex) {
+            const name = weekdayNames[weekdayIndex];
+            const offset = weekdayOffsets[name] || { marginLeft: 100, marginTop: 0 };
+            weekdayImage.style.marginLeft = offset.marginLeft + 'px';
+            weekdayImage.style.marginTop = offset.marginTop + 'px';
+        }
+
+        function showWeekday(weekdayIndex) {
+            weekdayImage.src = `img/text-day/${weekdayNames[weekdayIndex]}.png`;
+            setWeekdayLayout(weekdayIndex);
+        }
+
         const params = new URLSearchParams(location.search);
 
         if (params.has('weekday') && weekdayNames.includes(params.get('weekday'))) {
-            weekdayImage.src = `img/text-day/${params.get('weekday')}.png`;
+            showWeekday(weekdayNames.indexOf(params.get('weekday')));
         } else if (params.has('day')) {
             const day = Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1));
             const month = Math.max(1, Math.min(12, parseInt(params.get('month') || String(new Date().getMonth() + 1), 10)));
             const year = parseInt(params.get('year') || String(new Date().getFullYear()), 10);
-            const weekday = new Date(year, month - 1, day).getDay();
-            weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+            showWeekday(new Date(year, month - 1, day).getDay());
         } else {
-            const weekday = new Date().getDay();
-            weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+            showWeekday(new Date().getDay());
         }
     </script>
 </body>

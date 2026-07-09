@@ -46,7 +46,7 @@
         #periodImage {
             position: absolute;
             left: 950px;
-            top: 90px;
+            top: 70px;
             transform: translateX(-50%);
             margin-top: 6px;
             z-index: 10;
@@ -125,11 +125,31 @@
         const periodImage = document.getElementById('periodImage');
         const weatherImage = document.getElementById('weatherImage');
 
+        const weekdayOffsets = {
+            dimanche: { marginLeft: -100, topExtra: 150 },
+            mardi: { marginLeft: -50, topExtra: 100 },
+            mercredi: { marginLeft: -100, topExtra: 150 },
+            vendredi: { marginLeft: -100, topExtra: 150 },
+            samedi: { marginLeft: -100, topExtra: 150 }
+        };
+
+        function setWeekdayLayout(weekdayIndex, dayNum) {
+            const name = weekdayNames[weekdayIndex];
+            const offset = weekdayOffsets[name] || { marginLeft: 100, topExtra: 0 };
+            weekdayImage.style.marginLeft = offset.marginLeft + 'px';
+            const baseTop = dayNum <= 9 ? 180 : 230;
+            weekdayImage.style.top = (baseTop + offset.topExtra) + 'px';
+        }
+
         function getPeriodImage() {
             const h = new Date().getHours();
             if (h >= 3 && h < 12) return 'img/periods/morning.png';
             if (h >= 12 && h < 18) return 'img/periods/noon.png';
             return 'img/periods/evening.png';
+        }
+
+        function setPeriodLeft(dayNum) {
+            periodImage.style.left = (dayNum >= 10 ? 1250 : 950) + 'px';
         }
 
         function setWeatherMargin(dayNum) {
@@ -151,8 +171,9 @@
             dayImage.src = `img/day/${day}.png`;
             // image du jour de la semaine, par ex. img/text-day/vendredi.png
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
-            weekdayImage.style.top = day <= 9 ? '180px' : '230px';
+            setWeekdayLayout(weekday, day);
             periodImage.src = getPeriodImage();
+            setPeriodLeft(day);
             setWeatherMargin(day);
         }
 
@@ -161,9 +182,10 @@
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
-            weekdayImage.style.top = day <= 9 ? '180px' : '230px';
+            setWeekdayLayout(weekday, day);
             periodImage.src = periodIcons[periodScrollIndex % periodIcons.length];
             periodScrollIndex++;
+            setPeriodLeft(day);
             weatherImage.src = weatherIcons[weatherScrollIndex % weatherIcons.length];
             weatherScrollIndex++;
             setWeatherMargin(day);

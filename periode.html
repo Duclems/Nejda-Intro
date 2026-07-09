@@ -19,7 +19,7 @@
             max-width: 100%;
             height: auto;
             margin-left: 200px;
-            margin-top: -410px;
+            margin-top: -430px;
         }
     </style>
 </head>
@@ -41,12 +41,21 @@
             return periodPaths.evening;
         }
 
+        function setPeriodLeft(dayNum) {
+            periodImage.style.marginLeft = (dayNum >= 10 ? 500 : 200) + 'px';
+        }
+
         const params = new URLSearchParams(location.search);
+        const day = params.has('day')
+            ? Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1))
+            : new Date().getDate();
+
         if (params.has('period') && periodPaths[params.get('period')]) {
             periodImage.src = periodPaths[params.get('period')];
         } else {
             periodImage.src = getPeriodImage();
         }
+        setPeriodLeft(day);
     </script>
 </body>
 </html>
