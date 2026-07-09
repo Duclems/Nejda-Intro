@@ -40,7 +40,7 @@
             z-index: 2;
             top: 140px;
             left: 58%;
-            margin-left: -250px;
+            margin-left: -230px;
             width: 109%;
             max-width: 579px;
             height: auto;
@@ -63,19 +63,31 @@
             max-width: none;
             height: auto;
         }
-        .weather-icon {
+        .weather-wrap {
+            position: relative;
             width: 650px;
             height: 400px;
+            margin-left: 12px;
+            margin-top: -350px;
+            transform: rotate(-15deg);
+            flex-shrink: 0;
+        }
+        .weather-box {
+            position: absolute;
+            inset: 0;
+            background: white;
+            z-index: 0;
+        }
+        .weather-gif {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             object-position: right center;
-            margin-left: 12px;
             padding-right: 20px;
-            margin-top: -350px;
-            background: white;
             box-sizing: border-box;
-            transform: rotate(-15deg);
-            position: relative;
-            z-index: 0;
+            z-index: 100;
         }
         .param-card {
             position: fixed;
@@ -139,7 +151,10 @@
             <img id="periodImage" alt="Période" />
         </div>
         <img id="weekdayImage" alt="Jour de la semaine" />
-        <img id="weatherImage" class="weather-icon" alt="Météo" />
+        <div id="weatherWrap" class="weather-wrap" style="display: none">
+            <div class="weather-box"></div>
+            <img id="weatherImage" class="weather-gif" alt="Météo" />
+        </div>
     </div>
 
     <script>
@@ -151,6 +166,7 @@
         const dayImage = document.getElementById('dayImage');
         const weekdayImage = document.getElementById('weekdayImage');
         const periodImage = document.getElementById('periodImage');
+        const weatherWrap = document.getElementById('weatherWrap');
         const weatherImage = document.getElementById('weatherImage');
         const paramDay = document.getElementById('paramDay');
         const paramMonth = document.getElementById('paramMonth');
@@ -173,6 +189,54 @@
             weekdayImage.style.top = (baseTop + offset.topExtra) + 'px';
         }
 
+        function getMonthMarginByUnit(unit) {
+            if (unit === 1) return -300;
+            if (unit === 2) return -250;
+            if (unit === 3) return -240;
+            if (unit === 4) return -210;
+            if (unit === 6) return -240;
+            if (unit === 7) return -275;
+            if (unit === 8 || unit === 9) return -240;
+            return -230;
+        }
+
+        const monthUnitOverrides = {
+            1: -20,
+            3: 10,
+            4: -30,
+            6: -10,
+            7: -30,
+            8: -10
+        };
+
+        const monthTwentiesOverrides = {
+            20: -50,
+            21: -30,
+            22: -10,
+            23: -15
+        };
+
+        const monthThirtiesOverrides = {
+            30: -320,
+            31: -160
+        };
+
+        function setMonthLayout(dayNum) {
+            let marginLeft = getMonthMarginByUnit(dayNum % 10);
+            marginLeft += Math.floor(dayNum / 10) * 200;
+            if (dayNum >= 10 && dayNum <= 29) {
+                marginLeft += 40;
+                const unit = dayNum % 10;
+                if (monthUnitOverrides[unit] !== undefined) marginLeft += monthUnitOverrides[unit];
+            }
+            if (dayNum >= 20 && dayNum <= 29) marginLeft -= 80;
+            if (monthTwentiesOverrides[dayNum] !== undefined) marginLeft += monthTwentiesOverrides[dayNum];
+            else if (dayNum >= 24 && dayNum <= 29) marginLeft -= 20;
+            if (dayNum >= 20 && dayNum <= 29 && dayNum !== 27) marginLeft -= 10;
+            if (monthThirtiesOverrides[dayNum] !== undefined) marginLeft += monthThirtiesOverrides[dayNum];
+            monthImage.style.marginLeft = marginLeft + 'px';
+        }
+
         function setPeriodLeft(dayNum) {
             periodImage.style.left = (dayNum >= 10 ? 1250 : 950) + 'px';
         }
@@ -184,7 +248,7 @@
             else if (dayNum <= 29) base = 320;
             else base = 350;
             if (dayNum === 1 || dayNum === 11 || dayNum === 21 || dayNum === 31) base += 50;
-            weatherImage.style.marginLeft = `-${base}px`;
+            weatherWrap.style.marginLeft = `-${base}px`;
         }
 
         function applyParams() {
@@ -199,6 +263,7 @@
 
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
+            setMonthLayout(day);
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
             setWeekdayLayout(weekday, day);
             setPeriodLeft(day);
@@ -210,10 +275,10 @@
             }
             if (weather) {
                 weatherImage.src = weatherPaths[weather];
-                weatherImage.style.display = 'block';
+                weatherWrap.style.display = 'block';
                 setWeatherMargin(day);
             } else {
-                weatherImage.style.display = 'none';
+                weatherWrap.style.display = 'none';
             }
         }
 

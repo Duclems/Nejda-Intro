@@ -14,22 +14,39 @@
             justify-content: center;
             min-height: 100vh;
         }
-        .weather-icon {
+        .weather-wrap {
+            position: relative;
             width: 650px;
             height: 400px;
+            transform: rotate(-15deg);
+        }
+        .weather-box {
+            position: absolute;
+            inset: 0;
+            background: white;
+            z-index: 0;
+        }
+        .weather-gif {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             object-position: right center;
             padding-right: 20px;
-            background: white;
             box-sizing: border-box;
-            transform: rotate(-15deg);
+            z-index: 100;
         }
     </style>
 </head>
 <body>
-    <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
+    <div id="weatherWrap" class="weather-wrap" style="display: none">
+        <div class="weather-box"></div>
+        <img id="weatherImage" class="weather-gif" alt="Météo" />
+    </div>
 
     <script>
+        const weatherWrap = document.getElementById('weatherWrap');
         const weatherImage = document.getElementById('weatherImage');
         const weatherPaths = {
             sun: 'img/weather/sun.gif',
@@ -55,7 +72,7 @@
 
         function showWeather(src) {
             weatherImage.src = src;
-            weatherImage.style.display = 'block';
+            weatherWrap.style.display = 'block';
         }
 
         const params = new URLSearchParams(location.search);
@@ -71,7 +88,7 @@
                     const code = data.current?.weather_code ?? 0;
                     showWeather(weatherCodeToIcon(code));
                 })
-                .catch(() => { weatherImage.style.display = 'none'; });
+                .catch(() => { weatherWrap.style.display = 'none'; });
         }
     </script>
 </body>

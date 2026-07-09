@@ -33,7 +33,7 @@
             z-index: 2;
             top: 140px;
             left: 58%;
-            margin-left: -250px;
+            margin-left: -230px;
             width: 109%;
             max-width: 579px;
             height: auto;
@@ -59,6 +59,51 @@
 
         dayImage.src = `img/day/${day}.png`;
         monthImage.src = `img/month/${month}.png`;
+        function getMonthMarginByUnit(unit) {
+            if (unit === 1) return -300;
+            if (unit === 2) return -250;
+            if (unit === 3) return -240;
+            if (unit === 4) return -210;
+            if (unit === 6) return -240;
+            if (unit === 7) return -275;
+            if (unit === 8 || unit === 9) return -240;
+            return -230;
+        }
+
+        const monthUnitOverrides = {
+            1: -20,
+            3: 10,
+            4: -30,
+            6: -10,
+            7: -30,
+            8: -10
+        };
+
+        const monthTwentiesOverrides = {
+            20: -50,
+            21: -30,
+            22: -10,
+            23: -15
+        };
+
+        const monthThirtiesOverrides = {
+            30: -320,
+            31: -160
+        };
+
+        let marginLeft = getMonthMarginByUnit(day % 10);
+        marginLeft += Math.floor(day / 10) * 200;
+        if (day >= 10 && day <= 29) {
+            marginLeft += 40;
+            const unit = day % 10;
+            if (monthUnitOverrides[unit] !== undefined) marginLeft += monthUnitOverrides[unit];
+        }
+        if (day >= 20 && day <= 29) marginLeft -= 80;
+        if (monthTwentiesOverrides[day] !== undefined) marginLeft += monthTwentiesOverrides[day];
+        else if (day >= 24 && day <= 29) marginLeft -= 20;
+        if (day >= 20 && day <= 29 && day !== 27) marginLeft -= 10;
+        if (monthThirtiesOverrides[day] !== undefined) marginLeft += monthThirtiesOverrides[day];
+        monthImage.style.marginLeft = marginLeft + 'px';
     </script>
 </body>
 </html>
