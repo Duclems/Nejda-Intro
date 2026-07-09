@@ -31,36 +31,47 @@
         const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
         const weekdayImage = document.getElementById('weekdayImage');
         const weekdayOffsets = {
-            dimanche: { marginLeft: -100, marginTop: 150 },
+            dimanche: { marginLeft: 0, marginTop: 50 },
             mardi: { marginLeft: -50, marginTop: 100 },
-            mercredi: { marginLeft: -100, marginTop: 150 },
-            vendredi: { marginLeft: -100, marginTop: 150 },
-            samedi: { marginLeft: -100, marginTop: 150 }
+            mercredi: { marginLeft: 0, marginTop: 50 },
+            vendredi: { marginLeft: 0, marginTop: 50 },
+            samedi: { marginLeft: 0, marginTop: 50 }
         };
 
-        function setWeekdayLayout(weekdayIndex) {
+        const singleDigitWeekdayExtra = new Set(['dimanche', 'mercredi', 'vendredi', 'samedi']);
+
+        function setWeekdayLayout(weekdayIndex, dayNum) {
             const name = weekdayNames[weekdayIndex];
             const offset = weekdayOffsets[name] || { marginLeft: 100, marginTop: 0 };
-            weekdayImage.style.marginLeft = offset.marginLeft + 'px';
-            weekdayImage.style.marginTop = offset.marginTop + 'px';
+            let marginLeft = offset.marginLeft;
+            let marginTop = offset.marginTop;
+            if (singleDigitWeekdayExtra.has(name) && dayNum <= 9) {
+                marginLeft -= 250;
+                marginTop += 30;
+            }
+            weekdayImage.style.marginLeft = marginLeft + 'px';
+            weekdayImage.style.marginTop = marginTop + 'px';
         }
 
-        function showWeekday(weekdayIndex) {
+        function showWeekday(weekdayIndex, dayNum) {
             weekdayImage.src = `img/text-day/${weekdayNames[weekdayIndex]}.png`;
-            setWeekdayLayout(weekdayIndex);
+            setWeekdayLayout(weekdayIndex, dayNum);
         }
 
         const params = new URLSearchParams(location.search);
 
         if (params.has('weekday') && weekdayNames.includes(params.get('weekday'))) {
-            showWeekday(weekdayNames.indexOf(params.get('weekday')));
+            const day = params.has('day')
+                ? Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1))
+                : new Date().getDate();
+            showWeekday(weekdayNames.indexOf(params.get('weekday')), day);
         } else if (params.has('day')) {
             const day = Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1));
             const month = Math.max(1, Math.min(12, parseInt(params.get('month') || String(new Date().getMonth() + 1), 10)));
             const year = parseInt(params.get('year') || String(new Date().getFullYear()), 10);
-            showWeekday(new Date(year, month - 1, day).getDay());
+            showWeekday(new Date(year, month - 1, day).getDay(), day);
         } else {
-            showWeekday(new Date().getDay());
+            showWeekday(new Date().getDay(), new Date().getDate());
         }
     </script>
 </body>

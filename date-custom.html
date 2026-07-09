@@ -174,19 +174,27 @@
         const paramPeriod = document.getElementById('paramPeriod');
         const paramWeather = document.getElementById('paramWeather');
         const weekdayOffsets = {
-            dimanche: { marginLeft: -100, topExtra: 150 },
+            dimanche: { marginLeft: 0, topExtra: 50 },
             mardi: { marginLeft: -50, topExtra: 100 },
-            mercredi: { marginLeft: -100, topExtra: 150 },
-            vendredi: { marginLeft: -100, topExtra: 150 },
-            samedi: { marginLeft: -100, topExtra: 150 }
+            mercredi: { marginLeft: 0, topExtra: 50 },
+            vendredi: { marginLeft: 0, topExtra: 50 },
+            samedi: { marginLeft: 0, topExtra: 50 }
         };
+
+        const singleDigitWeekdayExtra = new Set(['dimanche', 'mercredi', 'vendredi', 'samedi']);
 
         function setWeekdayLayout(weekdayIndex, dayNum) {
             const name = weekdayNames[weekdayIndex];
             const offset = weekdayOffsets[name] || { marginLeft: 100, topExtra: 0 };
-            weekdayImage.style.marginLeft = offset.marginLeft + 'px';
+            let marginLeft = offset.marginLeft;
+            let topExtra = offset.topExtra;
+            if (singleDigitWeekdayExtra.has(name) && dayNum <= 9) {
+                marginLeft -= 250;
+                topExtra += 30;
+            }
+            weekdayImage.style.marginLeft = marginLeft + 'px';
             const baseTop = dayNum <= 9 ? 180 : 230;
-            weekdayImage.style.top = (baseTop + offset.topExtra) + 'px';
+            weekdayImage.style.top = (baseTop + topExtra) + 'px';
         }
 
         function getMonthMarginByUnit(unit) {
@@ -248,6 +256,7 @@
             else if (dayNum <= 29) base = 320;
             else base = 350;
             if (dayNum === 1 || dayNum === 11 || dayNum === 21 || dayNum === 31) base += 50;
+            if (dayNum === 31) base -= 150;
             weatherWrap.style.marginLeft = `-${base}px`;
         }
 

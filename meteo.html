@@ -75,7 +75,22 @@
             weatherWrap.style.display = 'block';
         }
 
+        function setWeatherMargin(dayNum) {
+            let base;
+            if (dayNum <= 9) base = 640;
+            else if (dayNum <= 19) base = 390;
+            else if (dayNum <= 29) base = 320;
+            else base = 350;
+            if (dayNum === 1 || dayNum === 11 || dayNum === 21 || dayNum === 31) base += 50;
+            if (dayNum === 31) base -= 150;
+            weatherWrap.style.marginLeft = `-${base}px`;
+        }
+
         const params = new URLSearchParams(location.search);
+        const day = params.has('day')
+            ? Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1))
+            : new Date().getDate();
+
         if (params.has('weather') && weatherPaths[params.get('weather')]) {
             showWeather(weatherPaths[params.get('weather')]);
         } else {
@@ -90,6 +105,7 @@
                 })
                 .catch(() => { weatherWrap.style.display = 'none'; });
         }
+        setWeatherMargin(day);
     </script>
 </body>
 </html>
