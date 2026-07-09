@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mois</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <img id="monthImage" alt="Image du mois" />
+
+    <script>
+        const monthImage = document.getElementById('monthImage');
+        const params = new URLSearchParams(location.search);
+
+        if (params.has('month')) {
+            const month = Math.max(1, Math.min(12, parseInt(params.get('month'), 10) || 1));
+            monthImage.src = `img/month/${month}.png`;
+        } else {
+            const month = new Date().getMonth() + 1;
+            monthImage.src = `img/month/${month}.png`;
+        }
+    </script>
+</body>
+</html>

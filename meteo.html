@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Météo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .weather-icon {
+            width: 650px;
+            height: 400px;
+            object-fit: contain;
+            object-position: right center;
+            padding-right: 20px;
+            background: white;
+            box-sizing: border-box;
+            transform: rotate(-15deg);
+        }
+    </style>
+</head>
+<body>
+    <img id="weatherImage" class="weather-icon" alt="Météo" style="display: none" />
+
+    <script>
+        const weatherImage = document.getElementById('weatherImage');
+        const weatherPaths = {
+            sun: 'img/weather/sun.gif',
+            'cloudy-sun': 'img/weather/cloudy-sun.gif',
+            rain: 'img/weather/rain.gif',
+            clouds: 'img/weather/clouds.gif'
+        };
+
+        function weatherCodeToIcon(code) {
+            if (code === 0) return weatherPaths.sun;
+            if (code === 1 || code === 2) return weatherPaths['cloudy-sun'];
+            if (
+                (code >= 51 && code <= 67) ||
+                (code >= 80 && code <= 82) ||
+                (code >= 71 && code <= 77) ||
+                (code >= 85 && code <= 86) ||
+                (code >= 95 && code <= 99)
+            ) {
+                return weatherPaths.rain;
+            }
+            return weatherPaths.clouds;
+        }
+
+        function showWeather(src) {
+            weatherImage.src = src;
+            weatherImage.style.display = 'block';
+        }
+
+        const params = new URLSearchParams(location.search);
+        if (params.has('weather') && weatherPaths[params.get('weather')]) {
+            showWeather(weatherPaths[params.get('weather')]);
+        } else {
+            const latitude = 48.5839;
+            const longitude = 7.7455;
+            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=weather_code&timezone=Europe%2FParis&models=meteofrance_seamless`;
+            fetch(weatherUrl)
+                .then(r => r.json())
+                .then(data => {
+                    const code = data.current?.weather_code ?? 0;
+                    showWeather(weatherCodeToIcon(code));
+                })
+                .catch(() => { weatherImage.style.display = 'none'; });
+        }
+    </script>
+</body>
+</html>

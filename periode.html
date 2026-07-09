@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Période</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <img id="periodImage" alt="Période" />
+
+    <script>
+        const periodImage = document.getElementById('periodImage');
+        const periodPaths = {
+            morning: 'img/periods/morning.png',
+            noon: 'img/periods/noon.png',
+            evening: 'img/periods/evening.png'
+        };
+
+        function getPeriodImage() {
+            const h = new Date().getHours();
+            if (h >= 3 && h < 12) return periodPaths.morning;
+            if (h >= 12 && h < 18) return periodPaths.noon;
+            return periodPaths.evening;
+        }
+
+        const params = new URLSearchParams(location.search);
+        if (params.has('period') && periodPaths[params.get('period')]) {
+            periodImage.src = periodPaths[params.get('period')];
+        } else {
+            periodImage.src = getPeriodImage();
+        }
+    </script>
+</body>
+</html>

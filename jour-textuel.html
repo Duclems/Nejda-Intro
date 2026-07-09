@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jour (textuel)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            width: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <img id="weekdayImage" alt="Jour de la semaine" />
+
+    <script>
+        const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+        const weekdayImage = document.getElementById('weekdayImage');
+        const params = new URLSearchParams(location.search);
+
+        if (params.has('weekday') && weekdayNames.includes(params.get('weekday'))) {
+            weekdayImage.src = `img/text-day/${params.get('weekday')}.png`;
+        } else if (params.has('day')) {
+            const day = Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1));
+            const month = Math.max(1, Math.min(12, parseInt(params.get('month') || String(new Date().getMonth() + 1), 10)));
+            const year = parseInt(params.get('year') || String(new Date().getFullYear()), 10);
+            const weekday = new Date(year, month - 1, day).getDay();
+            weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+        } else {
+            const weekday = new Date().getDay();
+            weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
+        }
+    </script>
+</body>
+</html>

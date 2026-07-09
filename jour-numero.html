@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jour (numéro)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <img id="dayImage" alt="Numéro du jour" />
+
+    <script>
+        const dayImage = document.getElementById('dayImage');
+        const params = new URLSearchParams(location.search);
+
+        if (params.has('day')) {
+            const day = Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1));
+            dayImage.src = `img/day/${day}.png`;
+        } else {
+            const day = new Date().getDate();
+            dayImage.src = `img/day/${day}.png`;
+        }
+    </script>
+</body>
+</html>
