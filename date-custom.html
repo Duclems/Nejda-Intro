@@ -38,9 +38,9 @@
         #monthImage {
             position: absolute;
             z-index: 2;
-            top: 240px;
+            top: 140px;
             left: 58%;
-            margin-left: -300px;
+            margin-left: -250px;
             width: 109%;
             max-width: 579px;
             height: auto;
@@ -58,8 +58,9 @@
             z-index: 1;
             left: 0;
             margin-left: 100px;
-            top: 380px;
-            width: 1500px;
+            top: 230px;
+            width: 1035px;
+            max-width: none;
             height: auto;
         }
         .weather-icon {
@@ -179,7 +180,7 @@
             monthImage.src = `img/month/${month}.png`;
             dayImage.src = `img/day/${day}.png`;
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
-            weekdayImage.style.top = day <= 9 ? '330px' : '380px';
+            weekdayImage.style.top = day <= 9 ? '180px' : '230px';
             if (period) {
                 periodImage.src = periodPaths[period];
                 periodImage.style.display = 'block';
