@@ -46,16 +46,28 @@
         }
 
         const params = new URLSearchParams(location.search);
-        const day = params.has('day')
-            ? Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1))
-            : new Date().getDate();
+        const forcedPeriod = params.has('period') && periodPaths[params.get('period')]
+            ? params.get('period')
+            : null;
+        const forcedDay = params.has('day');
 
-        if (params.has('period') && periodPaths[params.get('period')]) {
-            periodImage.src = periodPaths[params.get('period')];
-        } else {
-            periodImage.src = getPeriodImage();
+        function refreshPeriod() {
+            const day = forcedDay
+                ? Math.max(1, Math.min(31, parseInt(params.get('day'), 10) || 1))
+                : new Date().getDate();
+            if (forcedPeriod) {
+                periodImage.src = periodPaths[forcedPeriod];
+            } else {
+                periodImage.src = getPeriodImage();
+            }
+            setPeriodLeft(day);
         }
-        setPeriodLeft(day);
+
+        refreshPeriod();
+        setInterval(refreshPeriod, 30000);
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') refreshPeriod();
+        });
     </script>
 </body>
 </html>

@@ -323,6 +323,16 @@
         scheduleHideButton();
         showCurrentDate();
 
+        function refreshLiveDate() {
+            if (scrollInterval) return;
+            showCurrentDate();
+        }
+
+        setInterval(refreshLiveDate, 30000);
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') refreshLiveDate();
+        });
+
         function weatherCodeToIcon(code) {
             if (code === 0) return 'img/weather/sun.gif';                      // grand ciel bleu
             if (code === 1 || code === 2) return 'img/weather/cloudy-sun.gif'; // soleil + quelques nuages
