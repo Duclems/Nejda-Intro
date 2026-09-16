@@ -44,7 +44,21 @@
         }
 
         function setPeriodLeft(dayNum) {
-            periodImage.style.marginLeft = (dayNum >= 10 ? 500 : 200) + 'px';
+            const isPm = (periodImage.src || '').includes('pm.png');
+            let marginLeft = dayNum < 10 ? 200 : 500;
+            let marginTop = -430;
+            if (isPm && dayNum < 10) {
+                marginLeft += 100;
+                marginTop -= 50;
+            } else if (isPm && dayNum <= 19) {
+                marginLeft -= 50;
+                marginTop -= 40;
+            } else if (isPm && dayNum <= 29) {
+                marginLeft += 50;
+                marginTop -= 50;
+            }
+            periodImage.style.marginLeft = marginLeft + 'px';
+            periodImage.style.marginTop = marginTop + 'px';
         }
 
         const params = new URLSearchParams(location.search);

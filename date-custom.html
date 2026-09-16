@@ -247,7 +247,21 @@
         }
 
         function setPeriodLeft(dayNum) {
-            periodImage.style.left = (dayNum >= 10 ? 1250 : 950) + 'px';
+            const isPm = (periodImage.src || '').includes('pm.png');
+            let left = dayNum < 10 ? 950 : 1250;
+            let top = 120;
+            if (isPm && dayNum < 10) {
+                left += 100;
+                top -= 50;
+            } else if (isPm && dayNum <= 19) {
+                left -= 50;
+                top -= 40;
+            } else if (isPm && dayNum <= 29) {
+                left += 50;
+                top -= 50;
+            }
+            periodImage.style.left = left + 'px';
+            periodImage.style.top = top + 'px';
         }
 
         function setWeatherMargin(dayNum) {
@@ -276,13 +290,13 @@
             setMonthLayout(day);
             weekdayImage.src = `img/text-day/${weekdayNames[weekday]}.png`;
             setWeekdayLayout(weekday, day);
-            setPeriodLeft(day);
             if (period) {
                 periodImage.src = periodPaths[period];
                 periodImage.style.display = 'block';
             } else {
                 periodImage.style.display = 'none';
             }
+            setPeriodLeft(day);
             if (weather) {
                 weatherImage.src = weatherPaths[weather];
                 weatherWrap.style.display = 'block';
