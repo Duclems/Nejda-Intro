@@ -127,7 +127,7 @@
         let savedWeatherSrc = '';
         let savedPeriodSrc = '';
         const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
-        const periodIcons = ['img/periods/morning.png', 'img/periods/noon.png', 'img/periods/evening.png'];
+        const periodIcons = ['img/periods/morning.png', 'img/periods/noon.png', 'img/periods/pm.png', 'img/periods/evening.png'];
         const weatherIcons = [
             'img/weather/sun.gif',
             'img/weather/cloudy-sun.gif',
@@ -220,7 +220,8 @@
         function getPeriodImage() {
             const h = new Date().getHours();
             if (h >= 3 && h < 12) return 'img/periods/morning.png';
-            if (h >= 12 && h < 18) return 'img/periods/noon.png';
+            if (h >= 12 && h < 13) return 'img/periods/noon.png';
+            if (h >= 13 && h < 18) return 'img/periods/pm.png';
             return 'img/periods/evening.png';
         }
 

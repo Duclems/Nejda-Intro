@@ -130,7 +130,8 @@
             <select id="paramPeriod">
                 <option value="">Aucune</option>
                 <option value="morning">Matin (3h–12h)</option>
-                <option value="noon">Après-midi (12h–18h)</option>
+                <option value="noon">Midi (12h–13h)</option>
+                <option value="pm">Après-midi (13h–18h)</option>
                 <option value="evening">Soir (18h–3h)</option>
             </select>
         </label>
@@ -159,7 +160,7 @@
 
     <script>
         const weekdayNames = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
-        const periodPaths = { morning: 'img/periods/morning.png', noon: 'img/periods/noon.png', evening: 'img/periods/evening.png' };
+        const periodPaths = { morning: 'img/periods/morning.png', noon: 'img/periods/noon.png', pm: 'img/periods/pm.png', evening: 'img/periods/evening.png' };
         const weatherPaths = { sun: 'img/weather/sun.gif', 'cloudy-sun': 'img/weather/cloudy-sun.gif', rain: 'img/weather/rain.gif', clouds: 'img/weather/clouds.gif' };
 
         const monthImage = document.getElementById('monthImage');

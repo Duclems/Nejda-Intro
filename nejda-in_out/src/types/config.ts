@@ -9,6 +9,7 @@ export type AppConfig = {
   textesLoading: string[];
   ranges: {
     morning: TimeRange;
+    noon: TimeRange;
     afternoon: TimeRange;
     evening: TimeRange;
   };
@@ -20,7 +21,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   textesLoading: ["J'arrive"],
   ranges: {
     morning: { start: "03:00", end: "12:00" },
-    afternoon: { start: "12:00", end: "18:00" },
+    noon: { start: "12:00", end: "13:00" },
+    afternoon: { start: "13:00", end: "18:00" },
     evening: { start: "18:00", end: "03:00" },
   },
 };

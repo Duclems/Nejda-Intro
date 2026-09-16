@@ -31,13 +31,15 @@
         const periodPaths = {
             morning: 'img/periods/morning.png',
             noon: 'img/periods/noon.png',
+            pm: 'img/periods/pm.png',
             evening: 'img/periods/evening.png'
         };
 
         function getPeriodImage() {
             const h = new Date().getHours();
             if (h >= 3 && h < 12) return periodPaths.morning;
-            if (h >= 12 && h < 18) return periodPaths.noon;
+            if (h >= 12 && h < 13) return periodPaths.noon;
+            if (h >= 13 && h < 18) return periodPaths.pm;
             return periodPaths.evening;
         }
 
